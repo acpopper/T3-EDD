@@ -10,4 +10,6 @@ obj/
 
 # Others
 /tests
+/solutions
 *.txt
+/dewey
