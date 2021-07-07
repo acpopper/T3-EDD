@@ -23,30 +23,34 @@ int main(int argc, char** argv)
     int n_edges;
     fscanf(input_file, "%d", &n_edges);
 
-    printf("%i %i %i\n", n_clientes, n_cd, n_edges);
+    // printf("%i %i %i\n", n_clientes, n_cd, n_edges);
 
     int V = n_clientes+n_cd;
     int E = n_edges;
     Graph* graph = createGraph(V, E);
 
-    int inicio;
-    int destino;
-    int costo;
-    for (int i = 0; i < n_edges; i++){
-        fscanf(input_file, "%d", &inicio);
-        fscanf(input_file, "%d", &destino);
-        fscanf(input_file, "%d", &costo);
-        graph->edges[i].src = inicio;
-        graph->edges[i].dest = destino;
-        graph->edges[i].weight = costo;
+    // int inicio;
+    // int destino;
+    // int costo;
+    for (int i = 0; i < E; i++){
+        fscanf(input_file, "%d", &graph->edges[i].src);
+        fscanf(input_file, "%d", &graph->edges[i].dest);
+        fscanf(input_file, "%d", &graph->edges[i].weight);
+        // graph->edges[i].src = inicio;
+        // graph->edges[i].dest = destino;
+        // graph->edges[i].weight = costo;
         printf("%i %i %i\n", graph->edges[i].src, graph->edges[i].dest, graph->edges[i].weight);
+    } //grafo se construye bien
+
+    Edge* resultado = malloc((V-1)*sizeof(Edge));
+    for(int j=0; j<graph->E; j++){
+        printf("EDGE src %i dest %i costo %i\n", graph->edges[j].src, graph->edges[j].dest, graph->edges[j].weight);
     }
-
-    // Edge* resultado = malloc(V*sizeof(Edge));
-    // KruskalMST(graph);
-
-    // destroy_graph(graph);
-    // free(resultado);
+    printf("Iniciando Kruskal\n");
+    KruskalMST(graph);
+    printf("Destruyendo grafo...\n");
+    destroy_graph(graph);
+    free(resultado);
     fclose(input_file);
     fclose(output_file);
     // Terminamos exitosamente
