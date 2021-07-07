@@ -21,4 +21,5 @@ Graph* createGraph(int V, int E);
 int find(Subset* subsets, int i);
 void Union(Subset* subsets, int x, int y);
 int comparar(const void* a, const void* b);
-void KruskalMST(Graph* graph);
+Edge* KruskalMST(Graph* graph);
+void destroy_graph(Graph* graph);

@@ -10,7 +10,7 @@ Graph* createGraph(int V, int E){
 }
 
 int find(Subset* subsets, int i){
-    if (subsets[i].parent != i){
+    if(subsets[i].parent != i){
         subsets[i].parent = find(subsets, subsets[i].parent);
     }
     return subsets[i].parent;
@@ -23,7 +23,7 @@ void Union(Subset* subsets, int x, int y){
     if(subsets[xroot].rank < subsets[yroot].rank){
         subsets[xroot].parent = yroot;
     }
-    else if (subsets[xroot].rank > subsets[yroot].rank){
+    else if(subsets[xroot].rank > subsets[yroot].rank){
         subsets[yroot].parent = xroot;
     }   
     else{
@@ -38,7 +38,7 @@ int comparar(const void* a, const void* b){
     return a1->weight > b1->weight;
 }
 
-void KruskalMST(Graph* graph){
+Edge* KruskalMST(Graph* graph){
     int V = graph->V;
     Edge* result = malloc(V*sizeof(Edge)); // This will store the resultant MST
     int e = 0; // An index variable, used for result[]
@@ -55,7 +55,7 @@ void KruskalMST(Graph* graph){
  
     // Mientras los edges sean menor a V-1 y el grafo siga teniendo edges
     while(e < V-1 && i < graph->E){
-        // Encuentro los vertices del edge
+        // Para cada edge, de menor a mayor, veo si forma ciclos o no
         Edge next_edge = graph->edges[i++]; //Recordar que find encuentra el representante
         int x = find(subsets, next_edge.src);
         int y = find(subsets, next_edge.dest);
@@ -68,15 +68,20 @@ void KruskalMST(Graph* graph){
         }
         // Else discard the next_edge
     }
- 
-    
+
     // int minimumCost = 0;
     // for (i = 0; i < e; ++i){
     //     printf("%d -- %d == %d\n", result[i].src, result[i].dest, result[i].weight);
     //     minimumCost += result[i].weight;
     // }
     // printf("Minimum Cost Spanning tree : %d",minimumCost);
-    
+
     // Retornamos el array de edges
-    return;
+    free(subsets);
+    return result;
+}
+
+void destroy_graph(Graph* graph){
+    free(graph->edges);
+    free(graph);
 }

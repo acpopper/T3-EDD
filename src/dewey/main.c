@@ -23,29 +23,33 @@ int main(int argc, char** argv)
     int n_edges;
     fscanf(input_file, "%d", &n_edges);
 
-    printf("%i %i %i\n", n_clientes, n_cd, n_edges);
+    // printf("%i %i %i\n", n_clientes, n_cd, n_edges);
 
     int V = n_clientes+n_cd;
     int E = n_edges;
-    struct Graph* graph = createGraph(V, E);
-
+    Graph* graph = createGraph(V, E);
 
     int inicio;
     int destino;
     int costo;
-    for (int i = 0; i < n_edges; i++)
-    {
+    for (int i = 0; i < n_edges; i++){
         fscanf(input_file, "%d", &inicio);
         fscanf(input_file, "%d", &destino);
         fscanf(input_file, "%d", &costo);
-        
-        printf("%i %i %i\n", inicio, destino, costo);
-     
+        // printf("%i %i %i\n", inicio, destino, costo);
+        graph->edges[0].src = inicio;
+        graph->edges[0].dest = destino;
+        graph->edges[0].weight = costo;
     }
 
+    Edge* resultado = malloc(V*sizeof(Edge));
+    KruskalMST(graph);
 
+    destroy_graph(graph);
+    free(resultado);
     fclose(input_file);
     fclose(output_file);
     // Terminamos exitosamente
+    printf("Terminado sin errores\n");
     return 0;
 }
