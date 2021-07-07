@@ -44,39 +44,37 @@ int comparar(const void* a, const void* b){
     return a1->weight > b1->weight;
 }
 
-Edge* KruskalMST(Graph* graph){
+Edge* ModifiedKruskal(Graph* graph, int centros){
     int V = graph->V;
-    Edge* result = malloc(V*sizeof(Edge)); // This will store the resultant MST
-    int e = 0; // An index variable, used for result[]
-    int i = 0; // An index variable, used for sorted edges
-
+    Edge* result = malloc(V*sizeof(Edge));
+    int e = 0;
+    int i = 0;
+    int clientes_listos = 0;
+    // printf("Cantidad cd's %i\n", V-centros);
+    int cd_represent[V - centros];
     qsort(graph->edges, graph->E, sizeof(graph->edges[0]), comparar);
     // printf("Edges sorted\n");
+    // for(int i=0; i<graph->E; i++){
+    //     printf("%i %i %i\n", graph->edges[i].src, graph->edges[i].dest, graph->edges[i].weight);
+    // }
     // Instancio los conjuntos disjuntos como vertices individuales
     Subset* subsets = malloc(V*sizeof(Subset));
     for(int v = 0; v < V; v++){
-        // printf("subset v = %i\n", v);
         subsets[v].parent = v;
         subsets[v].rank = 0;
     }
-    // for(int v = 0; v < V; v++){
-    //     printf("subset p %i r %i\n", subsets[v].parent, subsets[v].rank);
-    // }
-    // Se crean bien
     // printf("Subsets created\n");
 
-    // Mientras los edges sean menor a V-1 y el grafo siga teniendo edges
-    while(e < V-1 && i < graph->E){
-        // printf("e=%i i=%i\n", e, i);
-        // Para cada edge, de menor a mayor, veo si forma ciclos o no
+    // Mientras falten clientes por asignar y el grafo siga teniendo edges
+    while(clientes_listos < centros && i < graph->E){
         Edge next_edge = graph->edges[i]; //Recordar que find encuentra el representante
         i+=1;
-        // printf("Find start\n");
         int x = find(subsets, next_edge.src);
         int y = find(subsets, next_edge.dest);
-        // printf("Find end\n");
 
-        // Si edge no forma ciclo (distinto representante), se agrega
+        // Si edge no forma ciclo (distinto representante),
+        // O si por lo menos un vertice no pertenece al mismo conjunto que un centro (representante distinto que algun centro),
+        // entonces se agrega
         if(x != y){
             result[e] = next_edge;
             e+=1;

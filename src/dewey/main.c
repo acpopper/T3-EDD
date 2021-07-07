@@ -54,7 +54,7 @@ int main(int argc, char** argv)
     
     Edge* resultado = malloc((V-1)*sizeof(Edge));
     // printf("Iniciando Kruskal\n");
-    KruskalMST(graph);
+    ModifiedKruskal(graph, n_clientes);
     // printf("Destruyendo grafo...\n");
     destroy_graph(graph);
     free(resultado);
