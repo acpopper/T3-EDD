@@ -2,11 +2,14 @@
 
 // Creates a graph with V vertices and E edges
 Graph* createGraph(int V, int E){
-    Graph* graph = malloc(sizeof(Graph));
-    graph->V = V;
-    graph->E = E;
-    graph->edges = malloc(sizeof(Edge));
-    return graph;
+  Graph* graph = malloc(sizeof(Graph));
+  *graph = (Graph) {
+    .V=V,
+    .E=E,
+    .edges=calloc(E, sizeof(Edge))
+  };
+
+  return graph;
 }
 
 int find(Subset* subsets, int i){

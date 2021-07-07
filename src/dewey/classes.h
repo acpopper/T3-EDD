@@ -4,7 +4,9 @@
 #pragma once
 
 typedef struct edge {
-    int src, dest, weight;
+    int src;
+    int dest;
+    int weight;
 } Edge;
 
 typedef struct graph {
