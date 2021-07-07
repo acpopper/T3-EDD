@@ -13,27 +13,34 @@ Graph* createGraph(int V, int E){
 }
 
 int find(Subset* subsets, int i){
-    // printf("1. i=%i\n", i);
     if(subsets[i].parent != i){
-        // printf("2. i=%i\n", i);
         subsets[i].parent = find(subsets, subsets[i].parent);
     }
-    // printf("3. i=%i\n", i);
     return subsets[i].parent;
 }
 
-void Union(Subset* subsets, int x, int y){
-    int xroot = find(subsets, x);
-    int yroot = find(subsets, y);
+void Union(Subset* subsets, int x, int y, int* cdreps, int index_centro){
+    int xroot = x;
+    int yroot = y;
  
     if(subsets[xroot].rank < subsets[yroot].rank){
         subsets[xroot].parent = yroot;
+        if(index_centro!=-1){
+            cdreps[index_centro] = yroot;
+        }
+        
     }
     else if(subsets[xroot].rank > subsets[yroot].rank){
         subsets[yroot].parent = xroot;
+        if(index_centro!=-1){
+            cdreps[index_centro] = xroot;
+        }
     }   
     else{
         subsets[yroot].parent = xroot;
+        if(index_centro!=-1){
+            cdreps[index_centro] = yroot;
+        }
         subsets[xroot].rank++;
     }
 }
@@ -44,52 +51,73 @@ int comparar(const void* a, const void* b){
     return a1->weight > b1->weight;
 }
 
-Edge* ModifiedKruskal(Graph* graph, int centros){
+Edge* ModifiedKruskal(Graph* graph, int n_clientes){
     int V = graph->V;
     Edge* result = malloc(V*sizeof(Edge));
     int e = 0;
     int i = 0;
-    int clientes_listos = 0;
-    // printf("Cantidad cd's %i\n", V-centros);
-    int cd_represent[V - centros];
+    // printf("Cantidad cd's %i\n", V-n_clientes);
+    int cdreps[V - n_clientes];
+    for(int i=0; i<(V-n_clientes); i++){
+        cdreps[i] = n_clientes+i;
+    }
+
     qsort(graph->edges, graph->E, sizeof(graph->edges[0]), comparar);
-    // printf("Edges sorted\n");
     // for(int i=0; i<graph->E; i++){
     //     printf("%i %i %i\n", graph->edges[i].src, graph->edges[i].dest, graph->edges[i].weight);
     // }
+
     // Instancio los conjuntos disjuntos como vertices individuales
     Subset* subsets = malloc(V*sizeof(Subset));
     for(int v = 0; v < V; v++){
         subsets[v].parent = v;
         subsets[v].rank = 0;
     }
-    // printf("Subsets created\n");
 
     // Mientras falten clientes por asignar y el grafo siga teniendo edges
-    while(clientes_listos < centros && i < graph->E){
-        Edge next_edge = graph->edges[i]; //Recordar que find encuentra el representante
+    while(e < n_clientes && i < graph->E){
+        // printf("e:%i ncl:%i i:%i E:%i\n", e, n_clientes , i, graph->E);
+        Edge next_edge = graph->edges[i];
         i+=1;
-        int x = find(subsets, next_edge.src);
+        int x = find(subsets, next_edge.src); //Recordar que find encuentra el representante
         int y = find(subsets, next_edge.dest);
-
+        
         // Si edge no forma ciclo (distinto representante),
-        // O si por lo menos un vertice no pertenece al mismo conjunto que un centro (representante distinto que algun centro),
-        // entonces se agrega
-        if(x != y){
+        // y si por lo menos un vertice no pertenece al mismo conjunto que algun centro (representante distinto que algun centro),
+        // entonces se agrega edge a MST
+        bool x_asignado = false;
+        bool y_asignado = false;
+        int index_centro = -1;
+        for(int i=0; i<(V - n_clientes); i++){
+            if(x == cdreps[i]){
+                x_asignado = true;
+                index_centro = i;
+            }
+            if(y == cdreps[i]){
+                y_asignado = true;
+                index_centro = i;
+            }
+        }
+        // printf("src %i rep %i dest %i rep %i\n", next_edge.src, x, next_edge.dest, y);
+        // printf("xas %i yas %i\n", x_asignado, y_asignado);
+        
+        if(x != y && (!x_asignado || !y_asignado)){
+            // printf("Entra\n");
             result[e] = next_edge;
             e+=1;
             // Se unen los vertices 
-            Union(subsets, x, y);
+            Union(subsets, x, y, cdreps, index_centro);
         }
+        // printf("\n");
         // Else discard the next_edge
     }
 
-    int minimumCost = 0;
-    for (i = 0; i < e; ++i){
-        printf("%d -- %d == %d\n", result[i].src, result[i].dest, result[i].weight);
-        minimumCost += result[i].weight;
-    }
-    printf("Minimum Cost Spanning tree : %d",minimumCost);
+    // int minimumCost = 0;
+    // for (i = 0; i < e; ++i){
+    //     printf("%d -- %d == %d\n", result[i].src, result[i].dest, result[i].weight);
+    //     minimumCost += result[i].weight;
+    // }
+    // printf("Minimum Cost Spanning tree : %d",minimumCost);
 
     // Retornamos el array de edges
     // printf("Returning MST\n");

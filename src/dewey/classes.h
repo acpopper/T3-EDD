@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 #pragma once
 
 typedef struct edge {
@@ -21,7 +22,7 @@ typedef struct subset {
 
 Graph* createGraph(int V, int E);
 int find(Subset* subsets, int i);
-void Union(Subset* subsets, int x, int y);
+void Union(Subset* subsets, int x, int y, int* cdreps, int index_centro);
 int comparar(const void* a, const void* b);
 Edge* ModifiedKruskal(Graph* graph, int centros);
 void destroy_graph(Graph* graph);
