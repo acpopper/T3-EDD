@@ -37,31 +37,30 @@ int main(int argc, char** argv)
         fscanf(input_file, "%i", &costo[i]);
         // printf("%i %i %i\n", inicio[i], destino[i], costo[i]);
     }
-    printf("\n");
     for(int i = 0; i < E; i++){
         graph->edges[i].src = inicio[i];
         graph->edges[i].dest = destino[i];
         graph->edges[i].weight = costo[i];
-        printf("%i %i %i\n", graph->edges[i].src, graph->edges[i].dest, graph->edges[i].weight);
+        // printf("%i %i %i\n", graph->edges[i].src, graph->edges[i].dest, graph->edges[i].weight);
     }
-    printf("\n");
-    for(int i = 0; i < E; i++){
-        printf("%i %i %i\n", graph->edges[i].src, graph->edges[i].dest, graph->edges[i].weight);
-    }
-    printf("\n");
-    for(int i = 0; i < E; i++){
-        printf("%i %i %i\n", graph->edges[i].src, graph->edges[i].dest, graph->edges[i].weight);
-    }
+    // printf("\n");
+    // for(int i = 0; i < E; i++){
+    //     printf("%i %i %i\n", graph->edges[i].src, graph->edges[i].dest, graph->edges[i].weight);
+    // }
+    // printf("\n");
+    // for(int i = 0; i < E; i++){
+    //     printf("%i %i %i\n", graph->edges[i].src, graph->edges[i].dest, graph->edges[i].weight);
+    // }
     
     Edge* resultado = malloc((V-1)*sizeof(Edge));
-    printf("Iniciando Kruskal\n");
+    // printf("Iniciando Kruskal\n");
     KruskalMST(graph);
-    printf("Destruyendo grafo...\n");
+    // printf("Destruyendo grafo...\n");
     destroy_graph(graph);
     free(resultado);
     fclose(input_file);
     fclose(output_file);
     // Terminamos exitosamente
-    printf("Terminado sin errores\n");
+    // printf("Terminado sin errores\n");
     return 0;
 }
