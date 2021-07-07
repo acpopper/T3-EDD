@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "classes.h"
 
 
 int main(int argc, char** argv)
@@ -23,6 +24,11 @@ int main(int argc, char** argv)
     fscanf(input_file, "%d", &n_edges);
 
     printf("%i %i %i\n", n_clientes, n_cd, n_edges);
+
+    int V = n_clientes+n_cd;
+    int E = n_edges;
+    struct Graph* graph = createGraph(V, E);
+
 
     int inicio;
     int destino;
