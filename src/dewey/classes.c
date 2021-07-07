@@ -46,7 +46,7 @@ Edge* KruskalMST(Graph* graph){
     Edge* result = malloc(V*sizeof(Edge)); // This will store the resultant MST
     int e = 0; // An index variable, used for result[]
     int i = 0; // An index variable, used for sorted edges
-    
+
     qsort(graph->edges, graph->E, sizeof(graph->edges[0]), comparar);
     printf("Edges sorted\n");
     // Instancio los conjuntos disjuntos como vertices individuales
@@ -61,9 +61,9 @@ Edge* KruskalMST(Graph* graph){
     // }
     // Se crean bien
     printf("Subsets created\n");
-    for(int j=0; j<graph->E; j++){
-        printf("EDGE src %i dest %i costo %i\n", graph->edges[j].src, graph->edges[j].dest, graph->edges[j].weight);
-    }
+    // for(int j=0; j<graph->E; j++){
+    //     printf("EDGE src %i dest %i costo %i\n", graph->edges[j].src, graph->edges[j].dest, graph->edges[j].weight);
+    // }
 
     // Mientras los edges sean menor a V-1 y el grafo siga teniendo edges
     // while(e < V-1 && i < graph->E){

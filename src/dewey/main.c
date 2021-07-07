@@ -32,7 +32,7 @@ int main(int argc, char** argv)
     // int inicio;
     // int destino;
     // int costo;
-    for (int i = 0; i < E; i++){
+    for(int i = 0; i < E; i++){
         fscanf(input_file, "%d", &graph->edges[i].src);
         fscanf(input_file, "%d", &graph->edges[i].dest);
         fscanf(input_file, "%d", &graph->edges[i].weight);
@@ -40,11 +40,16 @@ int main(int argc, char** argv)
         // graph->edges[i].dest = destino;
         // graph->edges[i].weight = costo;
         printf("%i %i %i\n", graph->edges[i].src, graph->edges[i].dest, graph->edges[i].weight);
-    } //grafo se construye bien
-
+    } 
+    printf("\n");
+    for(int i = 0; i < E; i++){
+        printf("%i %i %i\n", graph->edges[i].src, graph->edges[i].dest, graph->edges[i].weight);
+    }
+    
     Edge* resultado = malloc((V-1)*sizeof(Edge));
-    for(int j=0; j<graph->E; j++){
-        printf("EDGE src %i dest %i costo %i\n", graph->edges[j].src, graph->edges[j].dest, graph->edges[j].weight);
+    printf("\n");
+    for(int i = 0; i < E; i++){
+        printf("%i %i %i\n", graph->edges[i].src, graph->edges[i].dest, graph->edges[i].weight);
     }
     printf("Iniciando Kruskal\n");
     KruskalMST(graph);
