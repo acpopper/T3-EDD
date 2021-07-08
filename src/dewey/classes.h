@@ -17,11 +17,11 @@ typedef struct graph {
 } Graph;
 
 typedef struct subset {
-    int parent;
-    int rank;
+    int rep;
+    int rango;
 } Subset;
 
-Graph* createGraph(int V, int E);
+Graph* init_Graph(int V, int E);
 int find(Subset* subsets, int i);
 void Union(Subset* subsets, int x, int y, int* cdreps, int index_centro);
 int comparar(const void* a, const void* b);

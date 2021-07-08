@@ -1,7 +1,7 @@
 #include "classes.h"
 
 // Creates a graph with V vertices and E edges
-Graph* createGraph(int V, int E){
+Graph* init_Graph(int V, int E){
   Graph* graph = malloc(sizeof(Graph));
   *graph = (Graph) {
     .V=V,
@@ -13,89 +13,71 @@ Graph* createGraph(int V, int E){
 }
 
 int find(Subset* subsets, int i){
-    if(subsets[i].parent != i){
-        subsets[i].parent = find(subsets, subsets[i].parent);
+    if(subsets[i].rep != i){
+        subsets[i].rep = find(subsets, subsets[i].rep);
     }
-    return subsets[i].parent;
+    return subsets[i].rep;
 }
 
 void Union(Subset* subsets, int x, int y, int* cdreps, int index_centro){
-    int xroot = x;
-    int yroot = y;
- 
-    if(subsets[xroot].rank < subsets[yroot].rank){
-        subsets[xroot].parent = yroot;
+    if(subsets[x].rango < subsets[y].rango){
+        subsets[x].rep = y;
         if(index_centro!=-1){
-            cdreps[index_centro] = yroot;
+            cdreps[index_centro] = y;
         }
         
     }
-    else if(subsets[xroot].rank > subsets[yroot].rank){
-        subsets[yroot].parent = xroot;
+    else if(subsets[x].rango > subsets[y].rango){
+        subsets[y].rep = x;
         if(index_centro!=-1){
-            cdreps[index_centro] = xroot;
+            cdreps[index_centro] = x;
         }
     }   
     else{
-        subsets[yroot].parent = xroot;
+        subsets[y].rep = x;
         if(index_centro!=-1){
-            cdreps[index_centro] = xroot;
+            cdreps[index_centro] = x;
         }
-        subsets[xroot].rank++;
+        subsets[x].rango++;
     }
 }
-// Usada en quicksort
+// Usada en quicksort, extraida de GeeksforGeeks
 int comparar(const void* a, const void* b){
     Edge* a1 = (Edge*)a;
     Edge* b1 = (Edge*)b;
     return a1->weight > b1->weight;
 }
 
+// Funcion adaptada de GeeksforGeeks
 void ModifiedKruskal(Graph* graph, int n_clientes, FILE* output){
     int V = graph->V;
     Edge* result = malloc(V*sizeof(Edge));
-    int e = 0;
-    int i = 0;
-    // printf("Cantidad cd's %i\n", V-n_clientes);
+    int e = 0; // Cantidad de clientes conectados a un CD
+    int i = 0; // Por si nos pasamos de las aristas, termina el while
+    
     int cdreps[V - n_clientes];
     for(int i=0; i<(V-n_clientes); i++){
         cdreps[i] = n_clientes+i;
     }
-    // printf("V %i ncl %i V-ncl %i\n", V, n_clientes, V-n_clientes);
-    // for(int i=0; i<(V-n_clientes); i++){
-    //     printf("%i ", cdreps[i]);
-    // }
-    // printf("\n");
-    // printf("\n");
+
     qsort(graph->edges, graph->E, sizeof(graph->edges[0]), comparar);
-    // for(int i=0; i<graph->E; i++){
-    //     printf("%i %i %i\n", graph->edges[i].src, graph->edges[i].dest, graph->edges[i].weight);
-    // }
-    // printf("\n");
 
     // Instancio los conjuntos disjuntos como vertices individuales
     Subset* subsets = malloc(V*sizeof(Subset));
     for(int v = 0; v < V; v++){
-        subsets[v].parent = v;
-        subsets[v].rank = 0;
+        subsets[v].rep = v;
+        subsets[v].rango = 0;
     }
-    // for(int v = 0; v < V; v++){
-        // printf("%i ", subsets[v].parent);
-    // }
-    // printf("\n");
-    // printf("E %i\n", graph->E);
 
     // Mientras falten clientes por asignar y el grafo siga teniendo edges
     while(e < n_clientes && i < graph->E){
-        // printf("e:%i ncl:%i i:%i E:%i\n", e, n_clientes , i, graph->E);
         Edge next_edge = graph->edges[i];
         i+=1;
         int x = find(subsets, next_edge.src); //Recordar que find encuentra el representante
         int y = find(subsets, next_edge.dest);
         
-        // Si edge no forma ciclo (distinto representante),
-        // y si por lo menos un vertice no pertenece al mismo conjunto que algun centro (representante distinto que algun centro),
-        // entonces se agrega edge a MST
+        // Vemos si origen y/o destino ya estan conectados a algun CD
+        // Aprovechamos de rescatar el indice del CD para nuestro arreglo
         bool x_asignado = false;
         bool y_asignado = false;
         int index_centro = -1;
@@ -109,35 +91,28 @@ void ModifiedKruskal(Graph* graph, int n_clientes, FILE* output){
                 index_centro = i;
             }
         }
-
-        // printf("src %i rep %i dest %i rep %i\n", next_edge.src, x, next_edge.dest, y);
-        // printf("xas %i yas %i\n", x_asignado, y_asignado);
-        // for(int i=0; i<(V-n_clientes); i++){
-        //     printf("%i ", cdreps[i]);
-        // }
-        // printf("\n");
+        // Si por lo menos alguno de los conjuntos le falta conectarse a un CD (su representante no calza con nuestro arreglo 
+        // de CD's),
+        // O bien si ambos no forman ciclos (representantes distintos)
+        // Se agrega al resultado del MST
         if(x != y && (!x_asignado || !y_asignado)){
-            // printf("Entra\n");
             result[e] = next_edge;
             e+=1;
-            // Se unen los vertices 
+            // Se unen los conjuntos
             Union(subsets, x, y, cdreps, index_centro);
         }
-        // printf("\n");
-        // Else discard the next_edge
     }
-
-    int minimumCost = 0;
+    // Escribimos el output
+    int costofinal = 0;
     for (i = 0; i < e; ++i){
-        minimumCost += result[i].weight;
+        costofinal += result[i].weight;
     }
-    fprintf(output, "%i\n", minimumCost);
+    fprintf(output, "%i\n", costofinal);
     for (i = 0; i < e; ++i){
         fprintf(output, "%i\n", result[i].orden);
     }
 
-    // Retornamos el array de edges
-    // printf("Returning MST\n");
+    // Liberamos la memoria una vez escrito el output
     free(subsets);
     free(result);
     return;
