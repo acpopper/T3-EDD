@@ -39,7 +39,7 @@ void Union(Subset* subsets, int x, int y, int* cdreps, int index_centro){
     else{
         subsets[yroot].parent = xroot;
         if(index_centro!=-1){
-            cdreps[index_centro] = yroot;
+            cdreps[index_centro] = xroot;
         }
         subsets[xroot].rank++;
     }
@@ -61,11 +61,17 @@ void ModifiedKruskal(Graph* graph, int n_clientes, FILE* output){
     for(int i=0; i<(V-n_clientes); i++){
         cdreps[i] = n_clientes+i;
     }
-
+    // printf("V %i ncl %i V-ncl %i\n", V, n_clientes, V-n_clientes);
+    // for(int i=0; i<(V-n_clientes); i++){
+    //     printf("%i ", cdreps[i]);
+    // }
+    // printf("\n");
+    // printf("\n");
     qsort(graph->edges, graph->E, sizeof(graph->edges[0]), comparar);
     // for(int i=0; i<graph->E; i++){
     //     printf("%i %i %i\n", graph->edges[i].src, graph->edges[i].dest, graph->edges[i].weight);
     // }
+    // printf("\n");
 
     // Instancio los conjuntos disjuntos como vertices individuales
     Subset* subsets = malloc(V*sizeof(Subset));
@@ -73,6 +79,11 @@ void ModifiedKruskal(Graph* graph, int n_clientes, FILE* output){
         subsets[v].parent = v;
         subsets[v].rank = 0;
     }
+    // for(int v = 0; v < V; v++){
+        // printf("%i ", subsets[v].parent);
+    // }
+    // printf("\n");
+    // printf("E %i\n", graph->E);
 
     // Mientras falten clientes por asignar y el grafo siga teniendo edges
     while(e < n_clientes && i < graph->E){
@@ -98,9 +109,13 @@ void ModifiedKruskal(Graph* graph, int n_clientes, FILE* output){
                 index_centro = i;
             }
         }
+
         // printf("src %i rep %i dest %i rep %i\n", next_edge.src, x, next_edge.dest, y);
         // printf("xas %i yas %i\n", x_asignado, y_asignado);
-        
+        // for(int i=0; i<(V-n_clientes); i++){
+        //     printf("%i ", cdreps[i]);
+        // }
+        // printf("\n");
         if(x != y && (!x_asignado || !y_asignado)){
             // printf("Entra\n");
             result[e] = next_edge;
