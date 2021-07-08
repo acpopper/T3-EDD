@@ -51,7 +51,7 @@ int comparar(const void* a, const void* b){
     return a1->weight > b1->weight;
 }
 
-Edge* ModifiedKruskal(Graph* graph, int n_clientes){
+void ModifiedKruskal(Graph* graph, int n_clientes, FILE* output){
     int V = graph->V;
     Edge* result = malloc(V*sizeof(Edge));
     int e = 0;
@@ -112,17 +112,20 @@ Edge* ModifiedKruskal(Graph* graph, int n_clientes){
         // Else discard the next_edge
     }
 
-    // int minimumCost = 0;
-    // for (i = 0; i < e; ++i){
-    //     printf("%d -- %d == %d\n", result[i].src, result[i].dest, result[i].weight);
-    //     minimumCost += result[i].weight;
-    // }
-    // printf("Minimum Cost Spanning tree : %d",minimumCost);
+    int minimumCost = 0;
+    for (i = 0; i < e; ++i){
+        minimumCost += result[i].weight;
+    }
+    fprintf(output, "%i\n", minimumCost);
+    for (i = 0; i < e; ++i){
+        fprintf(output, "%i\n", result[i].orden);
+    }
 
     // Retornamos el array de edges
     // printf("Returning MST\n");
     free(subsets);
-    return result;
+    free(result);
+    return;
 }
 
 void destroy_graph(Graph* graph){

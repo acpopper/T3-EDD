@@ -41,6 +41,7 @@ int main(int argc, char** argv)
         graph->edges[i].src = inicio[i];
         graph->edges[i].dest = destino[i];
         graph->edges[i].weight = costo[i];
+        graph->edges[i].orden = i;
         // printf("%i %i %i\n", graph->edges[i].src, graph->edges[i].dest, graph->edges[i].weight);
     }
     // printf("\n");
@@ -52,15 +53,16 @@ int main(int argc, char** argv)
     //     printf("%i %i %i\n", graph->edges[i].src, graph->edges[i].dest, graph->edges[i].weight);
     // }
     
-    Edge* resultado = malloc((V-1)*sizeof(Edge));
     // printf("Iniciando Kruskal\n");
-    ModifiedKruskal(graph, n_clientes);
+    ModifiedKruskal(graph, n_clientes, output_file);
+    
     // printf("Destruyendo grafo...\n");
     destroy_graph(graph);
-    free(resultado);
     fclose(input_file);
     fclose(output_file);
+    free(inicio);
+    free(destino);
+    free(costo);
     // Terminamos exitosamente
-    // printf("Terminado sin errores\n");
     return 0;
 }
